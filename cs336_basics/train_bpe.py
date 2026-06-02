@@ -80,7 +80,7 @@ def train_bpe(
             pair_counts[pair] += count
             where_is_pair[pair].add(idx)
 
-    for i in range(vocab_size - len(vocab)):
+    for i in tqdm(range(vocab_size - len(vocab)), desc='Training BPE'):
         pair_to_merge = max(pair_counts.items(), key=lambda x: (x[1], x[0]))[0]
         indices_to_update = where_is_pair[pair_to_merge]
         new_token = pair_to_merge[0] + pair_to_merge[1]
@@ -146,7 +146,7 @@ def get_word_frequencies(
 
         # The following is a serial implementation, but you can parallelize this
         # by sending each start/end pair to a set of processes.
-    worker_args = [(input_path, start, end, special_tokens) for start, end in zip(boundaries[:-1], boundaries[1:])]
+    worker_args = [(input_path, start, end, special_tokens) for start, end in tqdm(zip(boundaries[:-1], boundaries[1:]), desc='Finding chunk boundaries', total=len(boundaries)-1)]
     with multiprocessing.Pool(processes=num_processes) as pool:
         results = pool.starmap(get_word_frequencies_worker, worker_args)
         for result in results:

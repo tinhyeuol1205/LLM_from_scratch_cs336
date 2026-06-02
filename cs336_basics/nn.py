@@ -163,20 +163,3 @@ def cross_entropy(logits: torch.Tensor, targets: torch.Tensor):
     loss = log_sum_exp + target_loss
 
     return loss.mean()
-
-    
-
-
-        
-            
-
-            
-        
-    
-
-
-    
-    
-    
-        
-    
