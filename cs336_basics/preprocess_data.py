@@ -11,7 +11,7 @@ def preprocess(data_path: str | os.PathLike | typing.BinaryIO | typing.IO[bytes]
     num_processes = os.cpu_count() or 4
     with open(data_path, "rb") as f:
         boundaries = find_chunk_boundaries(f, num_processes, b"<|endoftext|>")
-    worker_args = [(data_path, start, end, tokenizer) for (start, end) in zip(boundaries[:-1], boundaries[1:])]
+    worker_args = [(data_path, start, end, tokenizer) for (start, end) in tqdm(zip(boundaries[:-1], boundaries[1:]), total=len(boundaries)-1, desc='Tokenizing chunks')]
     with multiprocessing.Pool(processes=num_processes) as pool:
         results = pool.starmap(encode_worker, worker_args)
     with open(output_path, "wb") as fout:
