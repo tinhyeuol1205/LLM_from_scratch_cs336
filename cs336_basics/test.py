@@ -1,17 +1,22 @@
-# import requests
-# import json
-
-# code = "7154"
-
-# r = requests.get(
-#     "https://copy-paste.online/api/v1/paste",
-#     params={"code": code}
-# )
-# print(r.status_code)
-# data = json.loads(r.text)
-# print(len(data["message"]))
-# # with open("vocab_from_api.json", "w") as f:
-# #     json.dump(data, f, indent=4)
-from cs336_basics.preprocess_data import preprocess
-
-preprocess("data/owt.txt", "data/owt_train.bin")
+import torch
+logits = torch.tensor([[0.1, 0.5, 0.3, 0.6, 0.2]])
+sorted_logits, sorted_indices = torch.sort(logits, dim=-1, descending=True)
+print(sorted_logits, sorted_indices)
+probs = torch.softmax(sorted_logits, dim=-1)
+print(probs)
+cumulative_probs = torch.cumsum(probs, dim=-1)
+print(cumulative_probs)
+mask = cumulative_probs > 0.5
+print(mask)
+mask[:, 1:] = mask[:, :-1].clone()
+print(mask)
+mask[:, 0] = False
+print(mask)
+sorted_logits[mask] = -float('inf')
+print(sorted_logits)
+probs = torch.softmax(sorted_logits, dim=-1)
+print(probs)
+next_token = torch.multinomial(probs, num_samples=1)
+print(next_token)
+next_token = torch.gather(sorted_indices, dim=-1, index=next_token)
+print(next_token)

@@ -1,7 +1,6 @@
-from tokenizer import Tokenizer
-from nn import TransformerLM
+from cs336_basics.tokenizer import Tokenizer
+from cs336_basics.nn import TransformerLM
 import torch
-
 
 def generate(prompt: str, max_new_tokens: int, temperature: float=1.0, top_p: int | None = None):
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
@@ -44,6 +43,9 @@ def generate(prompt: str, max_new_tokens: int, temperature: float=1.0, top_p: in
             if next_token == tokenizer.vocab["<|endoftext|>"]:
                 break
     return tokenizer.decode(tokens[0].tolist())
+
+def main():
+    print(generate("Hello, my name is", 100, top_p=0.8, temperature=0.8))
 
     
 
