@@ -13,7 +13,6 @@ def main():
         warmup_iters=2000,
         cosin_cycle_iters=100000,
         batch_size=32,
-        max_tokens=1048576,
         context_length=1024,
         weight_decay=0.01,
         betas=(0.9, 0.98),

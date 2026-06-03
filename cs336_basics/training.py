@@ -15,8 +15,8 @@ from cs336_basics.optimizer import (
 
 def data_loading(dataset: npt.NDArray, batch_size: int, context_length: int, device: str) -> tuple[torch.Tensor, torch.Tensor]:
     rand_ids = torch.randint(len(dataset)-context_length, (batch_size,))
-    x = torch.stack([torch.from_numpy(dataset[i:i+context_length]) for i in rand_ids])
-    y = torch.stack([torch.from_numpy(dataset[i+1:i+context_length+1]) for i in rand_ids])
+    x = torch.stack([torch.from_numpy(dataset[i:i+context_length].astype(np.int64)) for i in rand_ids])
+    y = torch.stack([torch.from_numpy(dataset[i+1:i+context_length+1].astype(np.int64)) for i in rand_ids])
     return (x.to(device), y.to(device))
 
 def save_checkpoint(model: torch.nn.Module, optimizer: torch.optim.Optimizer, iteration: int, out: str | os.PathLike | typing.BinaryIO | typing.IO[bytes]):
@@ -46,7 +46,6 @@ def train(
     warmup_iters: int,
     cosin_cycle_iters: int,
     batch_size: int,
-    max_tokens: int,
     context_length: int,
     weight_decay: float,
     betas: tuple[float, float],
@@ -96,7 +95,6 @@ def train(
             "architecture": "TransformerLM",
             "num_heads": num_heads,
             "num_layers": num_layers,
-            "max_tokens": max_tokens,
             "context_length": context_length,
             "weight_decay": weight_decay,
             "betas": betas,
@@ -118,7 +116,7 @@ def train(
             print(f"Iteration {it}, Val Loss {val_loss}")
             save_checkpoint(model, optimizer, it, os.path.join(checkpoint_dir, f"checkpoint_{it}.pt"))
         model.train()
-        lr = get_lr_cosin_schedule(max_lr, min_lr, warmup_iters, cosin_cycle_iters, it)
+        lr = get_lr_cosin_schedule(it, max_lr, min_lr, warmup_iters, cosin_cycle_iters)
         for group in optimizer.param_groups:
             group['lr'] = lr
 
