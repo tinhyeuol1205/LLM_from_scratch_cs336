@@ -24,9 +24,8 @@ def preprocess(data_path: str | os.PathLike | typing.BinaryIO | typing.IO[bytes]
 def encode_worker(input_path: str, start: int, end: int, tokenizer: Tokenizer):
     with open(input_path, "rb") as f:
         f.seek(start)
-        chunk_bytes = f.read(end - start).decode("utf-8", errors="ignore")
-        text = chunk_bytes.decode('utf-8')
-    tokens = tokenizer.encode(text)
+        chunk = f.read(end - start).decode("utf-8", errors="ignore")
+    tokens = tokenizer.encode(chunk)
     return tokens
 
         

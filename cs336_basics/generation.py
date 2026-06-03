@@ -13,7 +13,7 @@ def generate(prompt: str, max_new_tokens: int, temperature: float=1.0, top_p: in
         num_layers=4, 
         max_seq_len=1024
     ).to(device)
-    model.load_state_dict(torch.load("model.pth"))
+    model.load_state_dict(torch.load("model.pth")["model_state_dict"])
     model.eval()
     
     tokenizer = Tokenizer.from_files("vocab.json", "merges.json", ["<|endoftext|>"])
@@ -40,12 +40,27 @@ def generate(prompt: str, max_new_tokens: int, temperature: float=1.0, top_p: in
                     probs = torch.softmax(logits, dim=-1)
                     next_token = torch.multinomial(probs, num_samples=1)
             tokens = torch.cat([tokens, next_token], dim=-1)
-            if next_token == tokenizer.vocab["<|endoftext|>"]:
+            if next_token == tokenizer.inverse_vocab["<|endoftext|>".encode("utf-8")]:
                 break
     return tokenizer.decode(tokens[0].tolist())
 
 def main():
     print(generate("Hello, my name is", 100, top_p=0.8, temperature=0.8))
+
+if __name__ == "__main__":
+    main()
+
+
+
+
+
+
+
+
+
+
+
+
 
     
 
