@@ -2,17 +2,24 @@ from cs336_basics_new.nn import TransformerLM
 from cs336_basics_new.optim import get_lr_cosin_schedule
 from cs336_basics_new.nn import cross_entropy
 from cs336_basics_new.nn import gradient_clipping
-from cs336_basics_new.training import TrainingConfig
+from cs336_basics_new.optim import AdamW
 from torch.utils.data import DataLoader
+from cs336_basics_new.training import TrainingConfig
 import torch
 import typing
 import os
 import wandb
 
 class Trainer:
-    def __init__(self, model: TransformerLM, optimizer: torch.optim.Optimizer, config: TrainingConfig, train_dataset, val_dataset):
+    def __init__(self, model: TransformerLM, config: TrainingConfig, train_dataset, val_dataset):
         self.model = model
-        self.optimizer = optimizer
+        self.optimizer = AdamW(
+            model.parameters(),
+            lr=config.max_lr,
+            weight_decay=config.weight_decay,
+            betas=config.betas,
+            eps=config.eps
+        )
         self.config = config
         self.train_dataset = train_dataset
         self.val_dataset = val_dataset
