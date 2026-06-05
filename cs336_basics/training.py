@@ -13,6 +13,7 @@ from cs336_basics.optimizer import (
     AdamW, get_lr_cosin_schedule, gradient_clipping
 )
 
+
 def data_loading(dataset: npt.NDArray, batch_size: int, context_length: int, device: str) -> tuple[torch.Tensor, torch.Tensor]:
     rand_ids = torch.randint(len(dataset)-context_length, (batch_size,))
     x = torch.stack([torch.from_numpy(dataset[i:i+context_length].astype(np.int64)) for i in rand_ids])
