@@ -4,7 +4,7 @@ from cs336_basics_new.nn import cross_entropy
 from cs336_basics_new.nn import gradient_clipping
 from cs336_basics_new.optim import AdamW
 from torch.utils.data import DataLoader
-from cs336_basics_new.training import TrainingConfig
+from .config import TrainingConfig
 import torch
 import typing
 import os
